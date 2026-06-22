@@ -1,6 +1,6 @@
-import ThemeSwitch from '@/components/theme/theme-switch';
 import Image from 'next/image';
 import Link from 'next/link';
+import ThemeSwitch from '../../theme/theme-switch';
 import MobileNavigation from './mobile-navigation';
 
 export default async function Navbar() {
@@ -17,12 +17,12 @@ export default async function Navbar() {
           Dev<span className="text-primary-500">Overflow</span>
         </p>
       </Link>
-
       <p>Global Search</p>
       <div className="flex-between gap-5">
         {/* theme switcher */}
         <ThemeSwitch />
 
+        {/* mobile navigation */}
         <MobileNavigation />
       </div>
     </nav>
