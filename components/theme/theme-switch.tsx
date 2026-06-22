@@ -1,6 +1,7 @@
 'use client';
 
 import { useTheme } from 'next-themes';
+import { useEffect, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -10,19 +11,29 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { cn } from '@/lib/utils';
-import { Moon, Sun } from 'lucide-react';
+import { LaptopMinimal, Moon, Sun } from 'lucide-react';
 
 export default function ThemeSwitch() {
-  const { theme, resolvedTheme, setTheme } = useTheme();
+  const { theme, setTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+
+  // Only render after component mounts. Defer setMounted to the next frame
+  // to avoid synchronous setState inside the effect which can trigger
+  // cascading renders.
+  useEffect(() => {
+    const id = requestAnimationFrame(() => setMounted(true));
+    return () => cancelAnimationFrame(id);
+  }, []);
 
   const themes = [
     { value: 'light', label: 'Light', icon: Sun },
     { value: 'dark', label: 'Dark', icon: Moon },
+    { value: 'system', label: 'System', icon: LaptopMinimal },
   ];
 
-  const currentTheme = theme === 'system' ? resolvedTheme : theme;
-  const CurrentThemeIcon =
-    themes.find((t) => t.value === currentTheme)?.icon || Sun;
+  const CurrentThemeIcon = mounted
+    ? themes.find((t) => t.value === theme)?.icon || Sun
+    : Sun; // Default to Sun during SSR
 
   return (
     <DropdownMenu>
@@ -42,14 +53,14 @@ export default function ThemeSwitch() {
             <Icon
               className={cn(
                 'size-5',
-                currentTheme === value
+                mounted && theme === value
                   ? 'text-primary-500'
                   : 'text-dark300_light900',
               )}
             />
             <span
               className={cn(
-                currentTheme === value
+                mounted && theme === value
                   ? 'primary-text-gradient'
                   : 'text-dark300_light900',
               )}

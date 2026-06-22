@@ -1,6 +1,7 @@
 import ThemeSwitch from '@/components/theme/theme-switch';
 import Image from 'next/image';
 import Link from 'next/link';
+import MobileNavigation from './mobile-navigation';
 
 export default async function Navbar() {
   return (
@@ -21,6 +22,8 @@ export default async function Navbar() {
       <div className="flex-between gap-5">
         {/* theme switcher */}
         <ThemeSwitch />
+
+        <MobileNavigation />
       </div>
     </nav>
   );
