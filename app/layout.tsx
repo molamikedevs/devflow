@@ -33,11 +33,11 @@ export default async function GlobalLayout({
           href="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/devicon.min.css"
         />
       </head>
-      <SessionProvider session={session}>
-        <body
-          className={`${inter.className} ${spaceGrotesk.variable} antialiased`}
-          suppressHydrationWarning
-        >
+      <body
+        className={`${inter.className} ${spaceGrotesk.variable} antialiased`}
+        suppressHydrationWarning
+      >
+        <SessionProvider session={session}>
           <ThemeProvider
             attribute="class"
             defaultTheme="system"
@@ -47,8 +47,8 @@ export default async function GlobalLayout({
             {children}
             <Toaster />
           </ThemeProvider>
-        </body>
-      </SessionProvider>
+        </SessionProvider>
+      </body>
     </html>
   );
 }

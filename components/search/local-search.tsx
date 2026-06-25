@@ -1,11 +1,8 @@
 'use client';
 
 import { Input } from '@/components/ui/input';
-import { useDebounce } from '@/hooks/useDebounce';
-import { formUrlQuery, removeKeysFormUrlQuery } from '@/lib/url';
+import { useLocalSearch } from '@/hooks/useLocalSearch';
 import Image from 'next/image';
-import { usePathname, useRouter, useSearchParams } from 'next/navigation';
-import { useEffect, useState } from 'react';
 
 interface Props {
   route: string;
@@ -22,33 +19,7 @@ export default function LocalSearch({
   route,
   placeholder,
 }: Props) {
-  const searchParams = useSearchParams();
-  const router = useRouter();
-  const pathname = usePathname();
-  const query = searchParams.get('query') || '';
-  const [searchQuery, setSearchQuery] = useState(query);
-  const debounceSearchQuery = useDebounce(searchQuery);
-
-  useEffect(() => {
-    if (debounceSearchQuery) {
-      const newUrl = formUrlQuery({
-        params: searchParams.toString(),
-        key: 'query',
-        value: debounceSearchQuery,
-      });
-      router.push(newUrl, { scroll: false });
-    } else {
-      if (pathname === route) {
-        const newUrl = removeKeysFormUrlQuery({
-          params: searchParams.toString(),
-          keysToRemove: ['query'],
-        });
-
-        router.push(newUrl, { scroll: false });
-      }
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [debounceSearchQuery, route, pathname]);
+  const { searchQuery, setSearchQuery } = useLocalSearch({ route });
 
   return (
     <div

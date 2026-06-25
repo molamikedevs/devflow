@@ -10,7 +10,7 @@ interface RemoveUrlQueryParams {
   keysToRemove: string[];
 }
 
-export const formUrlQuery = ({ params, key, value }: UrlQueryParams) => {
+export function formUrlQuery({ params, key, value }: UrlQueryParams) {
   const queryString = qs.parse(params);
 
   queryString[key] = value;
@@ -19,12 +19,12 @@ export const formUrlQuery = ({ params, key, value }: UrlQueryParams) => {
     url: window.location.pathname,
     query: queryString,
   });
-};
+}
 
-export const removeKeysFormUrlQuery = ({
+export function removeKeysFormUrlQuery({
   params,
   keysToRemove,
-}: RemoveUrlQueryParams) => {
+}: RemoveUrlQueryParams) {
   const queryString = qs.parse(params);
 
   keysToRemove.forEach((key) => {
@@ -38,4 +38,4 @@ export const removeKeysFormUrlQuery = ({
     },
     { skipNull: true },
   );
-};
+}
