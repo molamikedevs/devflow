@@ -50,3 +50,27 @@ export function getDevIconClassName(techName: string) {
 
   return `${techMap[normalizedTechName] || `devicon-${normalizedTechName}-plain`} colored`;
 }
+
+export function getTimeStamp(date: Date) {
+  const now = new Date().getTime();
+  const past = new Date(date).getTime();
+
+  const seconds = Math.floor((now - past) / 1000);
+
+  const units = [
+    { label: 'year', seconds: 60 * 60 * 24 * 365 },
+    { label: 'month', seconds: 60 * 60 * 24 * 30 },
+    { label: 'day', seconds: 60 * 60 * 24 },
+    { label: 'hour', seconds: 60 * 60 },
+    { label: 'minute', seconds: 60 },
+    { label: 'second', seconds: 1 },
+  ];
+
+  const unit = units.find((unit) => seconds >= unit.seconds);
+
+  if (!unit) return 'just now';
+
+  const value = Math.floor(seconds / unit.seconds);
+
+  return `${value} ${unit.label}${value !== 1 ? 's' : ''} ago`;
+}

@@ -13,12 +13,14 @@ export const questions = [
     author: {
       _id: '1',
       name: 'John Doe',
-      upvotes: 15,
-      downvotes: 1,
-      answers: 8,
-      views: 240,
-      created_at: new Date(),
+      image:
+        'https://img.magnific.com/premium-vector/person-with-blue-shirt-that-says-name-person_1029948-7040.jpg?semt=ais_hybrid&w=740&q=80',
     },
+    upvotes: 22,
+    downvotes: 3,
+    answers: 12,
+    views: 560,
+    createdAt: new Date(),
   },
   {
     _id: '2',
@@ -32,11 +34,8 @@ export const questions = [
     author: {
       _id: '2',
       name: 'Sarah Smith',
-      upvotes: 22,
-      downvotes: 3,
-      answers: 12,
-      views: 560,
-      created_at: new Date(),
+      image:
+        'https://img.magnific.com/premium-vector/person-with-blue-shirt-that-says-name-person_1029948-7040.jpg?semt=ais_hybrid&w=740&q=80',
     },
   },
   {
@@ -51,12 +50,14 @@ export const questions = [
     author: {
       _id: '3',
       name: 'Michael Brown',
-      upvotes: 30,
-      downvotes: 4,
-      answers: 15,
-      views: 890,
-      created_at: new Date(),
+      image:
+        'https://img.magnific.com/premium-vector/person-with-blue-shirt-that-says-name-person_1029948-7040.jpg?semt=ais_hybrid&w=740&q=80',
     },
+    upvotes: 30,
+    downvotes: 4,
+    answers: 15,
+    views: 890,
+    createdAt: new Date(),
   },
   {
     _id: '4',
@@ -70,12 +71,14 @@ export const questions = [
     author: {
       _id: '4',
       name: 'Emily Johnson',
-      upvotes: 18,
-      downvotes: 2,
-      answers: 7,
-      views: 420,
-      created_at: new Date(),
+      image:
+        'https://img.magnific.com/premium-vector/person-with-blue-shirt-that-says-name-person_1029948-7040.jpg?semt=ais_hybrid&w=740&q=80',
     },
+    upvotes: 18,
+    downvotes: 2,
+    answers: 7,
+    views: 420,
+    createdAt: new Date(),
   },
   {
     _id: '5',
@@ -89,12 +92,14 @@ export const questions = [
     author: {
       _id: '5',
       name: 'David Wilson',
-      upvotes: 25,
-      downvotes: 5,
-      answers: 10,
-      views: 720,
-      created_at: new Date(),
+      image:
+        'https://img.magnific.com/premium-vector/person-with-blue-shirt-that-says-name-person_1029948-7040.jpg?semt=ais_hybrid&w=740&q=80',
     },
+    upvotes: 22,
+    downvotes: 3,
+    answers: 12,
+    views: 560,
+    createdAt: new Date(),
   },
 ];
 
