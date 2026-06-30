@@ -6,14 +6,13 @@ import {
   DefaultValues,
   FieldValues,
   Path,
-  Resolver,
   SubmitHandler,
   useForm,
 } from 'react-hook-form';
 import { ZodType } from 'zod';
 
 import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
+import { Card, CardContent, CardFooter } from '@/components/ui/card';
 import {
   Field,
   FieldError,
@@ -25,7 +24,7 @@ import AuthSwitch from '../common/auth-switch';
 
 interface AuthFormProps<T extends FieldValues> {
   schema: ZodType<T, T>;
-  defaultValues: DefaultValues<T>;
+  defaultValues: T;
   onSubmit: (data: T) => Promise<{ success: boolean }>;
   formType: 'SIGN_IN' | 'SIGN_UP';
 }
@@ -37,7 +36,7 @@ export default function AuthForm<T extends FieldValues>({
   onSubmit,
 }: AuthFormProps<T>) {
   const form = useForm<T>({
-    resolver: zodResolver(schema) as Resolver<T>,
+    resolver: zodResolver(schema as never),
     defaultValues: defaultValues as DefaultValues<T>,
   });
 
@@ -48,7 +47,7 @@ export default function AuthForm<T extends FieldValues>({
   };
 
   return (
-    <Card className="w-full sm:max-w-md bg-background-light900_dark300 mt-4 border-none">
+    <Card className="w-full sm:max-w-md bg-background-light900_dark300 mt-4 border-red">
       <CardContent>
         <form
           id="auth-form"
@@ -79,7 +78,6 @@ export default function AuthForm<T extends FieldValues>({
                       {...field}
                       id={field.name === 'email' ? 'email' : field.name}
                       aria-invalid={fieldState.invalid}
-                      required
                       type={field.name === 'password' ? 'password' : 'text'}
                       placeholder={
                         field.name === 'email'
@@ -96,6 +94,10 @@ export default function AuthForm<T extends FieldValues>({
               />
             ))}
           </FieldGroup>
+        </form>
+      </CardContent>
+      <CardFooter>
+        <Field orientation="horizontal">
           <Button
             type="submit"
             form="auth-form"
@@ -108,11 +110,11 @@ export default function AuthForm<T extends FieldValues>({
                 : 'Sign Up...'
               : buttonText}
           </Button>
-          <div className="text-center">
-            <AuthSwitch formType={formType} />
-          </div>
-        </form>
-      </CardContent>
+        </Field>
+      </CardFooter>
+      <div className="text-center">
+        <AuthSwitch formType={formType} />
+      </div>
     </Card>
   );
 }
