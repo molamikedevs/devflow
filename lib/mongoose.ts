@@ -10,6 +10,9 @@ interface MongooseCache {
   promise: Promise<Mongoose> | null;
 }
 
+// Next.js hot-reloads modules in dev and reuses the same Node process
+// serverlessly, so we cache the connection on `global` to avoid opening
+// a new connection on every request/reload.
 declare global {
   var mongoose: MongooseCache;
 }
@@ -26,15 +29,22 @@ export default async function dbConnect(): Promise<Mongoose> {
   }
 
   if (!cached.promise) {
+    // Cache the in-flight promise (not just the resolved conn) so
+    // concurrent requests during startup all await the same connection
+    // attempt instead of triggering multiple simultaneous connects.
     cached.promise = mongoose
       .connect(MONGODB_URI, {
         dbName: 'devflow',
+        bufferCommands: false, // fail fast instead of queueing ops while disconnected
       })
       .then((result) => {
         console.log('Connected to mongodDb');
         return result;
       })
       .catch((error) => {
+        // Reset promise on failure, otherwise every future call
+        // re-throws this same rejected promise forever.
+        cached.promise = null;
         console.error('Error connecting to mongoDb', error);
         throw error;
       });
