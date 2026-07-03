@@ -14,8 +14,8 @@ export interface Question {
   title: string;
   description: string;
   createdAt: Date;
-  upvotes: number;
-  downvotes: number;
+  upvote: number;
+  downvote: number;
   answers: number;
   views: number;
   author: Author;

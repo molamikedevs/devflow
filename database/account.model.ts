@@ -1,4 +1,4 @@
-import { model, models, Schema, Types } from 'mongoose';
+import { Document, model, models, Schema, Types } from 'mongoose';
 
 export interface IAccount {
   userId: Types.ObjectId;
@@ -8,6 +8,8 @@ export interface IAccount {
   provider: string;
   providerAccountId: string;
 }
+
+export interface IAccountDoc extends IAccount, Document {}
 
 const AccountSchema = new Schema<IAccount>(
   {
@@ -20,6 +22,9 @@ const AccountSchema = new Schema<IAccount>(
   },
   { timestamps: true },
 );
+
+// one account per provider per external account id
+AccountSchema.index({ provider: 1, providerAccountId: 1 }, { unique: true });
 
 const Account = models?.Account || model<IAccount>('Account', AccountSchema);
 
