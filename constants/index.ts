@@ -16,8 +16,8 @@ export const questions = [
       image:
         'https://img.magnific.com/premium-vector/person-with-blue-shirt-that-says-name-person_1029948-7040.jpg?semt=ais_hybrid&w=740&q=80',
     },
-    upvotes: 22,
-    downvotes: 3,
+    upvote: 22,
+    downvote: 3,
     answers: 12,
     views: 560,
     createdAt: new Date(),
@@ -53,8 +53,8 @@ export const questions = [
       image:
         'https://img.magnific.com/premium-vector/person-with-blue-shirt-that-says-name-person_1029948-7040.jpg?semt=ais_hybrid&w=740&q=80',
     },
-    upvotes: 30,
-    downvotes: 4,
+    upvote: 30,
+    downvote: 4,
     answers: 15,
     views: 890,
     createdAt: new Date(),
@@ -74,8 +74,8 @@ export const questions = [
       image:
         'https://img.magnific.com/premium-vector/person-with-blue-shirt-that-says-name-person_1029948-7040.jpg?semt=ais_hybrid&w=740&q=80',
     },
-    upvotes: 18,
-    downvotes: 2,
+    upvote: 18,
+    downvote: 2,
     answers: 7,
     views: 420,
     createdAt: new Date(),
@@ -95,8 +95,8 @@ export const questions = [
       image:
         'https://img.magnific.com/premium-vector/person-with-blue-shirt-that-says-name-person_1029948-7040.jpg?semt=ais_hybrid&w=740&q=80',
     },
-    upvotes: 22,
-    downvotes: 3,
+    upvote: 22,
+    downvote: 3,
     answers: 12,
     views: 560,
     createdAt: new Date(),
