@@ -22,17 +22,24 @@ export class ValidationError extends RequestError {
     this.name = 'ValidationError';
   }
 
-  // Static method
+  // Builds a single human-readable message from Zod's per-field error map
   static formatFieldErrors(errors: Record<string, string[]>): string {
-    const formattedMessages = Object.entries(errors).map(([field, message]) => {
-      const fieldName = field.charAt(0).toUpperCase() + field.slice(1);
+    const formattedMessages = Object.entries(errors).map(
+      ([field, messages]) => {
+        const fieldName = field.charAt(0).toUpperCase() + field.slice(1);
+        const firstMessage = messages[0] ?? '';
 
-      if (message[0] === 'Required') {
-        return `${fieldName} is required`;
-      } else {
-        return message.join(' and ');
-      }
-    });
+        // Handles both Zod 3 ("Required") and Zod 4 ("Invalid input: expected...")
+        // required-field wording, normalizing both into "X is required"
+        if (
+          firstMessage === 'Required' ||
+          firstMessage.toLowerCase().includes('received undefined')
+        ) {
+          return `${fieldName} is required`;
+        }
+        return messages.join(' and ');
+      },
+    );
 
     return formattedMessages.join(', ');
   }
@@ -51,9 +58,19 @@ export class ForbiddenError extends RequestError {
     this.name = 'ForbiddenError';
   }
 }
+
 export class UnauthorizedError extends RequestError {
   constructor(message: string = 'Unauthorized') {
     super(401, message);
     this.name = 'UnauthorizedError';
+  }
+}
+
+// Used when a request conflicts with existing state (e.g. duplicate
+// email/username on create) — maps to HTTP 409
+export class ConflictError extends RequestError {
+  constructor(message: string = 'Conflict') {
+    super(409, message);
+    this.name = 'ConflictError';
   }
 }
