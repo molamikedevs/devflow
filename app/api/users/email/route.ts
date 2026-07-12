@@ -14,6 +14,7 @@ export async function POST(request: Request) {
     const validatedData = UserSchema.partial().safeParse({ email });
     if (!validatedData.success)
       throw new ValidationError(validatedData.error.flatten().fieldErrors);
+
     const user = await User.findOne({ email });
     if (!user) throw new NotFoundError('User');
 

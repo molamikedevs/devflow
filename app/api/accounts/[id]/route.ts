@@ -50,6 +50,7 @@ export async function PUT(
   if (!id) throw new NotFoundError('Account');
 
   try {
+    await dbConnect();
     const body = await request.json();
     const validatedData = AccountSchema.partial().safeParse(body);
     if (!validatedData.success)
