@@ -22,13 +22,16 @@ export async function fetchHandler<T>(
   const controller = new AbortController();
   const id = setTimeout(() => controller.abort(), timeout);
 
-  const defaultHeaders: HeadersInit = {
+  // Headers constructor correctly normalizes all three HeadersInit shapes
+  // (Record, string[][], and Headers instances) — object spread silently
+  // drops entries when customHeaders is a Headers instance
+  const headers = new Headers({
     'Content-Type': 'application/json',
     Accept: 'application/json',
-  };
-
-  // Custom headers override the defaults
-  const headers: HeadersInit = { ...defaultHeaders, ...customHeaders };
+  });
+  if (customHeaders) {
+    new Headers(customHeaders).forEach((value, key) => headers.set(key, value));
+  }
 
   const config: RequestInit = {
     ...restOptions,
@@ -38,22 +41,27 @@ export async function fetchHandler<T>(
 
   try {
     const response = await fetch(url, config);
-    clearTimeout(id);
+
     if (!response.ok) {
       throw new RequestError(response.status, `Http error: ${response.status}`);
     }
 
-    return await response.json();
+    // 204/205 have no body — calling .json() on them throws
+    if (response.status === 204 || response.status === 205) {
+      return { success: true } as ActionResponse<T>;
+    }
+
+    return (await response.json()) as ActionResponse<T>;
   } catch (err) {
-    // Normalizes non-Error throws into an Error instance
     const error = isError(err) ? err : new Error('Unknown error');
 
-    // Aborts (timeouts) are logged as warnings; everything else as errors
     if (error.name === 'AbortError') {
       logger.warn(`Request to ${url} time out`);
     } else {
       logger.error(`Error fetching ${url}: ${error.message}`);
     }
-    return handleError(error) as unknown as ActionResponse<T>;
+    return handleError(error) as ActionResponse<T>;
+  } finally {
+    clearTimeout(id);
   }
 }

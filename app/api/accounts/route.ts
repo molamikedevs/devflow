@@ -1,5 +1,5 @@
 import Account from '@/database/account.model';
-import handler from '@/lib/handlers/error';
+import handleError from '@/lib/handlers/error';
 import { ForbiddenError } from '@/lib/http-errors';
 import dbConnect from '@/lib/mongoose';
 import { AccountSchema } from '@/lib/validation';
@@ -16,7 +16,7 @@ export async function GET() {
       { status: 200 },
     );
   } catch (error) {
-    return handler(error, 'api') as APIErrorResponse;
+    return handleError(error, 'api') as APIErrorResponse;
   }
 }
 
@@ -41,6 +41,6 @@ export async function POST(request: Request) {
       { status: 201 },
     );
   } catch (error) {
-    return handler(error, 'api') as APIErrorResponse;
+    return handleError(error, 'api') as APIErrorResponse;
   }
 }

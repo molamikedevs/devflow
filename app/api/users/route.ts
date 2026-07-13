@@ -1,5 +1,5 @@
 import User from '@/database/user.model';
-import handler from '@/lib/handlers/error';
+import handleError from '@/lib/handlers/error';
 import { ConflictError, ValidationError } from '@/lib/http-errors';
 import dbConnect from '@/lib/mongoose';
 import { UserSchema } from '@/lib/validation';
@@ -16,7 +16,7 @@ export async function GET() {
     return NextResponse.json({ success: true, data: users }, { status: 200 });
   } catch (error) {
     // Routes the error through the centralized handler for a consistent API response
-    return handler(error, 'api') as APIErrorResponse;
+    return handleError(error, 'api') as APIErrorResponse;
   }
 }
 
@@ -45,6 +45,6 @@ export async function POST(request: Request) {
 
     return NextResponse.json({ success: true, data: newUser }, { status: 201 });
   } catch (error) {
-    return handler(error, 'api') as APIErrorResponse;
+    return handleError(error, 'api') as APIErrorResponse;
   }
 }

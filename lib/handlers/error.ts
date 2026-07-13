@@ -1,3 +1,4 @@
+import { ErrorResponse } from '@/types/global';
 import { NextResponse } from 'next/server';
 import { ZodError } from 'zod';
 import { RequestError, ValidationError } from '../http-errors';
@@ -11,7 +12,7 @@ function formatResponse(
   message: string,
   errors?: Record<string, string[]> | undefined,
 ) {
-  const responseContent = {
+  const responseContent: ErrorResponse = {
     success: false,
     error: {
       message,

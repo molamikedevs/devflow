@@ -24,8 +24,9 @@ export interface Question {
   tags: Tag[];
 }
 
-export type ActionResponse<T = null> = {
-  seccess: boolean;
+// Standardized response type for API actions
+type ActionResponse<T = null> = {
+  success: boolean;
   data?: T;
   error?: {
     message: string;
@@ -34,8 +35,14 @@ export type ActionResponse<T = null> = {
   status?: number;
 };
 
-export type SuccessResponse<T = null> = ActionResponse<T> & { success: true };
-export type ErrorResponse = ActionResponse<undefined> & { success: false };
+// Successful response type
+type SuccessResponse<T = null> = ActionResponse<T> & { success: true };
 
-export type APIErrorResponse = NextResponse<ErrorResponse>;
-export type APIResponse<T = null> = NextResponse<SuccessResponse<T>>;
+// Error response type
+type ErrorResponse = ActionResponse<undefined> & { success: false };
+
+// Next.js specific response types
+type APIErrorResponse = NextResponse<ErrorResponse>;
+
+// Generic API response type
+type APIResponse<T = null> = NextResponse<SuccessResponse<T> | ErrorResponse>;

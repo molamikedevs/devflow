@@ -1,3 +1,4 @@
+import logger from '@/lib/logger';
 import dns from 'dns';
 import mongoose, { Mongoose } from 'mongoose';
 
@@ -7,12 +8,6 @@ const MONGODB_URI = process.env.MONGODB_URI as string;
 if (!MONGODB_URI) {
   throw new Error('MONGODB_URI is not defined');
 }
-
-console.log(
-  'URI loaded:',
-  !!process.env.MONGODB_URI,
-  process.env.MONGODB_URI?.slice(0, 20),
-);
 
 interface MongooseCache {
   conn: Mongoose | null;
@@ -47,14 +42,14 @@ export default async function dbConnect(): Promise<Mongoose> {
         bufferCommands: false, // fail fast instead of queueing ops while disconnected
       })
       .then((result) => {
-        console.log('Connected to mongodDb');
+        logger.info('Connected to mongodDb');
         return result;
       })
       .catch((error) => {
         // Reset promise on failure, otherwise every future call
         // re-throws this same rejected promise forever.
         cached.promise = null;
-        console.error('Error connecting to mongoDb', error);
+        logger.error('Error connecting to mongoDb', error);
         throw error;
       });
   }

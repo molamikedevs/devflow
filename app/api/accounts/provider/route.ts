@@ -1,5 +1,5 @@
 import Account from '@/database/account.model';
-import handler from '@/lib/handlers/error';
+import handleError from '@/lib/handlers/error';
 import { NotFoundError, ValidationError } from '@/lib/http-errors';
 import dbConnect from '@/lib/mongoose';
 import { AccountSchema } from '@/lib/validation';
@@ -22,6 +22,6 @@ export async function POST(request: Request) {
 
     return NextResponse.json({ success: true, data: account }, { status: 200 });
   } catch (error) {
-    return handler(error, 'api') as APIErrorResponse;
+    return handleError(error, 'api') as APIErrorResponse;
   }
 }

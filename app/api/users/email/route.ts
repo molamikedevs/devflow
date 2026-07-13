@@ -1,5 +1,5 @@
 import User from '@/database/user.model';
-import handler from '@/lib/handlers/error';
+import handleError from '@/lib/handlers/error';
 import { NotFoundError, ValidationError } from '@/lib/http-errors';
 import dbConnect from '@/lib/mongoose';
 import { UserSchema } from '@/lib/validation';
@@ -20,6 +20,6 @@ export async function POST(request: Request) {
 
     return NextResponse.json({ success: true, data: user }, { status: 200 });
   } catch (error) {
-    handler(error, 'api') as APIErrorResponse;
+    handleError(error, 'api') as APIErrorResponse;
   }
 }
