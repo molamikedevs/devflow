@@ -1,6 +1,6 @@
 import Account from '@/database/account.model';
 import handleError from '@/lib/handlers/error';
-import { ForbiddenError } from '@/lib/http-errors';
+import { ConflictError } from '@/lib/http-errors';
 import dbConnect from '@/lib/mongoose';
 import { AccountSchema } from '@/lib/validation';
 import { APIErrorResponse } from '@/types/global';
@@ -32,7 +32,7 @@ export async function POST(request: Request) {
       providerAccountId: validatedData.providerAccountId,
     });
     if (existingAccount)
-      throw new ForbiddenError('An account with the same already exist');
+      throw new ConflictError('An account with the same already exist');
 
     const newAccount = await Account.create(validatedData);
 

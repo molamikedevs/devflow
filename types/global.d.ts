@@ -46,3 +46,10 @@ type APIErrorResponse = NextResponse<ErrorResponse>;
 
 // Generic API response type
 type APIResponse<T = null> = NextResponse<SuccessResponse<T> | ErrorResponse>;
+
+export interface AuthCredentials {
+  name: string;
+  username: string;
+  email: string;
+  password: string;
+}

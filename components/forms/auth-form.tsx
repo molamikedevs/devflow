@@ -1,15 +1,8 @@
 'use client';
 
-import { zodResolver } from '@hookform/resolvers/zod';
-import {
-  Controller,
-  DefaultValues,
-  FieldValues,
-  Path,
-  SubmitHandler,
-  useForm,
-} from 'react-hook-form';
+import { Controller, FieldValues, Path } from 'react-hook-form';
 import { ZodType } from 'zod';
+import { useAuthForm } from './use-auth-form';
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
@@ -20,12 +13,13 @@ import {
   FieldLabel,
 } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
+import { ActionResponse } from '@/types/global';
 import AuthSwitch from '../common/auth-switch';
 
 interface AuthFormProps<T extends FieldValues> {
   schema: ZodType<T, T>;
   defaultValues: T;
-  onSubmit: (data: T) => Promise<{ success: boolean }>;
+  onSubmit: (data: T) => Promise<ActionResponse>;
   formType: 'SIGN_IN' | 'SIGN_UP';
 }
 
@@ -35,16 +29,12 @@ export default function AuthForm<T extends FieldValues>({
   defaultValues,
   onSubmit,
 }: AuthFormProps<T>) {
-  const form = useForm<T>({
-    resolver: zodResolver(schema as never),
-    defaultValues: defaultValues as DefaultValues<T>,
+  const { form, buttonText, handleSubmit } = useAuthForm({
+    formType,
+    schema,
+    defaultValues,
+    onSubmit,
   });
-
-  const buttonText = formType === 'SIGN_IN' ? 'Sign In' : 'Sign Up';
-
-  const handleSubmit: SubmitHandler<T> = async (data) => {
-    await onSubmit(data);
-  };
 
   return (
     <Card className="w-full sm:max-w-md bg-background-light900_dark300 mt-4 border-red">

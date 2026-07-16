@@ -5,6 +5,7 @@ const nextConfig: NextConfig = {
   experimental: {
     turbopackFileSystemCacheForDev: true,
   },
+
   images: {
     remotePatterns: [{ protocol: 'https', hostname: 'img.magnific.com' }],
   },
