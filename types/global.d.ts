@@ -14,7 +14,7 @@ export interface Author {
 export interface QuestionParams {
   _id: string;
   title: string;
-  description: string;
+  content: string;
   createdAt: Date;
   upvote: number;
   downvote: number;

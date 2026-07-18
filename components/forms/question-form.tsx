@@ -1,17 +1,10 @@
 'use client';
 
-import { siteConfig } from '@/config/site';
-import { createQuestion } from '@/lib/actions/question.action';
-import { AskQuestionSchema } from '@/lib/validation';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { type MDXEditorMethods } from '@mdxeditor/editor';
+import { QuestionParams } from '@/types/global';
 import '@mdxeditor/editor/style.css';
 import dynamic from 'next/dynamic';
-import { useRouter } from 'next/navigation';
-import React, { useRef } from 'react';
-import { Controller, useForm } from 'react-hook-form';
-import { toast } from 'sonner';
-import * as z from 'zod';
+import { Controller } from 'react-hook-form';
+import { useQuestionForm } from './use-question-form';
 
 import TagCard from '@/components/cards/Tag-card';
 import { Button } from '@/components/ui/button';
@@ -25,83 +18,26 @@ import {
 } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
 import { Spinner } from '@/components/ui/spinner';
-import { useTransition } from 'react';
 
 const Editor = dynamic(() => import('@/components/editor/index'), {
   // Make sure we turn SSR off
   ssr: false,
 });
 
-export default function QuestionForm() {
-  const router = useRouter();
-  const editorRef = useRef<MDXEditorMethods>(null);
-  const [isPending, startTransition] = useTransition();
+interface Props {
+  question?: QuestionParams;
+  isEdit?: boolean;
+}
 
-  const form = useForm<z.infer<typeof AskQuestionSchema>>({
-    resolver: zodResolver(AskQuestionSchema as never),
-    defaultValues: {
-      title: '',
-      content: '',
-      tags: [],
-    },
-  });
-
-  function handleInputKeyDown(
-    e: React.KeyboardEvent<HTMLInputElement>,
-    field: { value: string[] },
-  ) {
-    if (e.key === 'Enter') {
-      e.preventDefault();
-      const tagInput = e.currentTarget.value.trim();
-
-      if (tagInput && tagInput.length < 15 && !field.value.includes(tagInput)) {
-        form.setValue('tags', [...field.value, tagInput]);
-        e.currentTarget.value = '';
-        form.clearErrors('tags');
-      } else if (tagInput.length > 15) {
-        form.setError('tags', {
-          type: 'manual',
-          message: 'Tag should be less than 15 characters',
-        });
-      } else if (field.value.includes(tagInput)) {
-        form.setError('tags', {
-          type: 'manual',
-          message: 'Tag already exists',
-        });
-      }
-    }
-  }
-
-  const handleTagRemove = (tag: string, field: { value: string[] }) => {
-    const newTags = field.value.filter((t) => t !== tag);
-
-    form.setValue('tags', newTags);
-
-    if (newTags.length === 0) {
-      form.setError('tags', {
-        type: 'manual',
-        message: 'Tags are required',
-      });
-    }
-  };
-
-  async function handleCreateQuestion(data: z.infer<typeof AskQuestionSchema>) {
-    startTransition(async () => {
-      const result = await createQuestion(data);
-
-      if (result?.success) {
-        toast.success('Question created successfully');
-
-        if (result.success && result.data?._id) {
-          router.push(siteConfig.ROUTES.QUESTION(result.data._id));
-        }
-      } else {
-        toast.error(result?.status, {
-          description: result?.error?.message || 'Something went wrong',
-        });
-      }
-    });
-  }
+export default function QuestionForm({ question, isEdit = false }: Props) {
+  const {
+    editorRef,
+    isPending,
+    form,
+    handleInputKeyDown,
+    handleTagRemove,
+    handleCreateQuestion,
+  } = useQuestionForm({ question, isEdit });
 
   return (
     <Card className="flex w-full flex-col gap-10 bg-background-light700_dark300">
@@ -245,7 +181,7 @@ export default function QuestionForm() {
                   <span>Submitting...</span>
                 </>
               ) : (
-                <>Ask a question</>
+                <>{isEdit ? 'Edit question' : 'Ask a question'}</>
               )}
             </Button>
           </Field>
