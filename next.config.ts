@@ -7,7 +7,11 @@ const nextConfig: NextConfig = {
   },
 
   images: {
-    remotePatterns: [{ protocol: 'https', hostname: 'img.magnific.com' }],
+    remotePatterns: [
+      { protocol: 'https', hostname: 'img.magnific.com' },
+      { protocol: 'https', hostname: 'lh3.googleusercontent.com' },
+      { protocol: 'https', hostname: 'avatars.githubusercontent.com' },
+    ],
   },
 };
 

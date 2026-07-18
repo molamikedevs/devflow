@@ -1,9 +1,9 @@
-import { LogOut } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 
-import { auth, signOut } from '@/auth';
-import { Button } from '@/components/ui/button';
+import { auth } from '@/auth';
+import AuthButton from '@/components/common/auth-button';
+import Logout from '@/components/common/logout';
 import {
   Sheet,
   SheetClose,
@@ -11,7 +11,6 @@ import {
   SheetTitle,
   SheetTrigger,
 } from '@/components/ui/sheet';
-import { siteConfig } from '@/config/site';
 import NavLinks from './nav-links';
 
 const MobileNavigation = async () => {
@@ -57,38 +56,16 @@ const MobileNavigation = async () => {
           <div className="flex flex-col gap-3">
             {userId ? (
               <SheetClose asChild>
-                <form
-                  action={async () => {
-                    'use server';
-
-                    await signOut();
-                  }}
-                >
-                  <Button
-                    type="submit"
-                    className="base-medium w-fit bg-transparent px-4 py-3"
-                  >
-                    <LogOut className="size-5 text-black dark:text-white" />
-                    <span className="text-dark300_light900">Logout</span>
-                  </Button>
-                </form>
+                <Logout />
               </SheetClose>
             ) : (
               <>
                 <SheetClose asChild>
-                  <Link href={siteConfig.ROUTES.SIGN_IN}>
-                    <Button className="small-medium btn-secondary min-h-[41px] w-full rounded-lg px-4 py-3 shadow-none">
-                      <span className="primary-text-gradient">Log In</span>
-                    </Button>
-                  </Link>
+                  <AuthButton type="login" />
                 </SheetClose>
 
                 <SheetClose asChild>
-                  <Link href={siteConfig.ROUTES.SIGN_UP}>
-                    <Button className="small-medium light-border-2 btn-tertiary text-dark400_light900 min-h-[41px] w-full rounded-lg border px-4 py-3 shadow-none">
-                      <span>Sign Up</span>
-                    </Button>
-                  </Link>
+                  <AuthButton type="signup" />
                 </SheetClose>
               </>
             )}
