@@ -2,8 +2,6 @@ import logger from '@/lib/logger';
 import dns from 'dns';
 import mongoose, { Mongoose } from 'mongoose';
 
-dns.setServers(['8.8.8.8', '1.1.1.1']);
-
 const MONGODB_URI = process.env.MONGODB_URI as string;
 if (!MONGODB_URI) {
   throw new Error('MONGODB_URI is not defined');
@@ -33,6 +31,7 @@ export default async function dbConnect(): Promise<Mongoose> {
   }
 
   if (!cached.promise) {
+    dns.setServers(['8.8.8.8', '1.1.1.1']);
     // Cache the in-flight promise (not just the resolved conn) so
     // concurrent requests during startup all await the same connection
     // attempt instead of triggering multiple simultaneous connects.
@@ -40,6 +39,7 @@ export default async function dbConnect(): Promise<Mongoose> {
       .connect(MONGODB_URI, {
         dbName: 'DevFlow',
         bufferCommands: false, // fail fast instead of queueing ops while disconnected
+        serverSelectionTimeoutMS: 10000,
       })
       .then((result) => {
         logger.info('Connected to mongodDb');

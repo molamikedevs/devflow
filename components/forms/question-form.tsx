@@ -1,14 +1,19 @@
 'use client';
 
+import { siteConfig } from '@/config/site';
+import { createQuestion } from '@/lib/actions/question.action';
 import { AskQuestionSchema } from '@/lib/validation';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { type MDXEditorMethods } from '@mdxeditor/editor';
 import '@mdxeditor/editor/style.css';
 import dynamic from 'next/dynamic';
+import { useRouter } from 'next/navigation';
 import React, { useRef } from 'react';
 import { Controller, useForm } from 'react-hook-form';
+import { toast } from 'sonner';
 import * as z from 'zod';
 
+import TagCard from '@/components/cards/Tag-card';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
 import {
@@ -19,7 +24,8 @@ import {
   FieldLabel,
 } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
-import TagCard from '../cards/Tag-card';
+import { Spinner } from '@/components/ui/spinner';
+import { useTransition } from 'react';
 
 const Editor = dynamic(() => import('@/components/editor/index'), {
   // Make sure we turn SSR off
@@ -27,7 +33,10 @@ const Editor = dynamic(() => import('@/components/editor/index'), {
 });
 
 export default function QuestionForm() {
+  const router = useRouter();
   const editorRef = useRef<MDXEditorMethods>(null);
+  const [isPending, startTransition] = useTransition();
+
   const form = useForm<z.infer<typeof AskQuestionSchema>>({
     resolver: zodResolver(AskQuestionSchema as never),
     defaultValues: {
@@ -76,8 +85,22 @@ export default function QuestionForm() {
     }
   };
 
-  function handleCreateQuestion(data: z.infer<typeof AskQuestionSchema>) {
-    console.log(data);
+  async function handleCreateQuestion(data: z.infer<typeof AskQuestionSchema>) {
+    startTransition(async () => {
+      const result = await createQuestion(data);
+
+      if (result?.success) {
+        toast.success('Question created successfully');
+
+        if (result.success && result.data?._id) {
+          router.push(siteConfig.ROUTES.QUESTION(result.data._id));
+        }
+      } else {
+        toast.error(result?.status, {
+          description: result?.error?.message || 'Something went wrong',
+        });
+      }
+    });
   }
 
   return (
@@ -213,9 +236,17 @@ export default function QuestionForm() {
             <Button
               type="submit"
               form="question-form"
+              disabled={isPending}
               className="primary-gradient rounded-2 text-light-900!"
             >
-              Submit
+              {isPending ? (
+                <>
+                  <Spinner className="mr-2 h-4 w-4" />
+                  <span>Submitting...</span>
+                </>
+              ) : (
+                <>Ask a question</>
+              )}
             </Button>
           </Field>
         </CardFooter>
