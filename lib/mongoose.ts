@@ -1,3 +1,4 @@
+import '@/database';
 import logger from '@/lib/logger';
 import dns from 'dns';
 import mongoose, { Mongoose } from 'mongoose';

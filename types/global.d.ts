@@ -16,8 +16,8 @@ export interface QuestionParams {
   title: string;
   content: string;
   createdAt: Date;
-  upvote: number;
-  downvote: number;
+  upvotes: number;
+  downvotes: number;
   answers: number;
   views: number;
   author: Author;
@@ -50,4 +50,12 @@ type APIResponse<T = null> = NextResponse<SuccessResponse<T> | ErrorResponse>;
 interface RouteParams {
   params: Promise<Record<string, string>>;
   searchParams: Promise<Record<string, string>>;
+}
+
+export interface PaginatedSearchParams {
+  page?: number;
+  pageSize?: number;
+  query?: string;
+  filter?: string;
+  sort?: string;
 }

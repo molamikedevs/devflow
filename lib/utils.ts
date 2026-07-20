@@ -51,7 +51,8 @@ export function getDevIconClassName(techName: string) {
   return `${techMap[normalizedTechName] || `devicon-${normalizedTechName}-plain`} colored`;
 }
 
-export function getTimeStamp(date: Date) {
+export function getTimeStamp(createdAt: Date) {
+  const date = new Date(createdAt);
   const now = new Date().getTime();
   const past = new Date(date).getTime();
 
