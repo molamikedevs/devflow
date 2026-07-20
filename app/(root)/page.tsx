@@ -1,8 +1,10 @@
 import QuestionCard from '@/components/cards/question-card';
+import DataRenderer from '@/components/common/data-renderer';
 import HomeFilter from '@/components/filters/home-filter';
 import LocalSearch from '@/components/search/local-search';
 import { Button } from '@/components/ui/button';
 import { siteConfig } from '@/config/site';
+import { EMPTY_QUESTION } from '@/constants/states';
 import { getQuestions } from '@/lib/actions/question.action';
 
 import Link from 'next/link';
@@ -50,7 +52,22 @@ export default async function Home({ searchParams }: QuestionSearchParams) {
       </section>
       {/* Home filter */}
       <HomeFilter />
-      {success ? (
+
+      {/* Data Renderer */}
+      <DataRenderer
+        success={success}
+        error={error}
+        data={questions}
+        empty={EMPTY_QUESTION}
+        render={(questions) => (
+          <div className="flex flex-col mt-10 w-full gap-6">
+            {questions?.map((question) => (
+              <QuestionCard key={question._id} question={question} />
+            ))}
+          </div>
+        )}
+      />
+      {/* {success ? (
         <div className="flex flex-col mt-10 gap-6 w-full">
           {questions && questions.length > 0 ? (
             questions?.map((question) => (
@@ -68,7 +85,7 @@ export default async function Home({ searchParams }: QuestionSearchParams) {
             {error?.message || 'Failed to fetch questions'}
           </p>
         </div>
-      )}
+      )} */}
     </>
   );
 }
