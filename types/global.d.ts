@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 
-export interface Tag {
+export interface TagParams {
   _id: string;
   name: string;
 }
@@ -21,7 +21,7 @@ export interface QuestionParams {
   answers: number;
   views: number;
   author: Author;
-  tags: Tag[];
+  tags: TagParams[];
 }
 
 // Standardized response type for API actions
