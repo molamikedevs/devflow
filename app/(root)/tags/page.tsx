@@ -6,6 +6,10 @@ import { EMPTY_TAGS } from '@/constants/states';
 import { getTags } from '@/lib/actions/tag.action';
 import { RouteParams } from '@/types/global';
 
+export const metadata = {
+  title: 'Tags',
+};
+
 export default async function Tags({ searchParams }: RouteParams) {
   const { page, pageSize, filter, query } = await searchParams;
   const { data, error, success } = await getTags({

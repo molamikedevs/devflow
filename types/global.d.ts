@@ -63,3 +63,7 @@ export interface PaginatedSearchParams {
 export interface GetTagQuestionsParams extends PaginatedSearchParams {
   tagId: string;
 }
+
+export interface IncrementViewsParams {
+  questionId: string;
+}

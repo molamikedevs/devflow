@@ -7,6 +7,10 @@ import QuestionCard from '@/components/cards/question-card';
 import DataRenderer from '@/components/common/data-renderer';
 import LocalSearch from '@/components/search/local-search';
 
+export const metadata = {
+  title: 'Tag Details',
+};
+
 export default async function TagDetails({
   params,
   searchParams,
