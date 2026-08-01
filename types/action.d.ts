@@ -28,3 +28,8 @@ export interface EditQuestionParams extends CreateQuestionParams {
 export interface GetQuestionParams {
   questionId: string;
 }
+
+export interface CreateAnswerParams {
+  questionId: string;
+  content: string;
+}
