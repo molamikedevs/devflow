@@ -2,6 +2,7 @@ import TagCard from '@/components/cards/Tag-card';
 import Metric from '@/components/common/metric';
 import UserAvatar from '@/components/common/user-avatar';
 import PreviewContent from '@/components/editor/preview-content';
+import AnswerForm from '@/components/forms/answer-form';
 import { siteConfig } from '@/config/site';
 import { getQuestion, IncrementViews } from '@/lib/actions/question.action';
 import { formatNumber, getTimeStamp } from '@/lib/utils';
@@ -89,6 +90,9 @@ export default async function QuestionDetails({ params }: RouteParams) {
           />
         ))}
       </div>
+      <section className="my-5">
+        <AnswerForm />
+      </section>
     </>
   );
 }
