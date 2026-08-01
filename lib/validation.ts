@@ -154,3 +154,7 @@ export const AnswerSchema = z.object({
     .string()
     .min(100, { message: 'Answer has to have more that 100 characters' }),
 });
+
+export const AnswerServerSchema = AnswerSchema.extend({
+  questionId: z.string().min(1, 'Question ID is required'),
+});

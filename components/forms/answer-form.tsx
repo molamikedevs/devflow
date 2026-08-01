@@ -1,13 +1,15 @@
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useRef, useState } from 'react';
+import { useRef, useState, useTransition } from 'react';
 import { Controller, useForm } from 'react-hook-form';
+import { toast } from 'sonner';
 import * as z from 'zod';
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
 import { Field, FieldError, FieldGroup } from '@/components/ui/field';
+import { createAnswer } from '@/lib/actions/answer.action';
 import { AnswerSchema } from '@/lib/validation';
 import { type MDXEditorMethods } from '@mdxeditor/editor';
 import dynamic from 'next/dynamic';
@@ -18,8 +20,8 @@ const Editor = dynamic(() => import('@/components/editor/index'), {
   ssr: false,
 });
 
-export default function AnswerForm() {
-  const [isSubmitting, setIsSubmitting] = useState(false);
+export default function AnswerForm({ questionId }: { questionId: string }) {
+  const [isAnswering, startTransition] = useTransition();
   const [isAISubmitting, setIsAISubmitting] = useState(false);
   const editorRef = useRef<MDXEditorMethods>(null);
   const form = useForm<z.infer<typeof AnswerSchema>>({
@@ -30,7 +32,17 @@ export default function AnswerForm() {
   });
 
   function onSubmit(data: z.infer<typeof AnswerSchema>) {
-    console.log(data);
+    startTransition(async () => {
+      const result = await createAnswer({ questionId, content: data.content });
+      if (result.success) {
+        form.reset();
+        toast.success('Your answer has been posted successfully');
+      } else {
+        toast.error('Failed to post answer', {
+          description: result.error?.message,
+        });
+      }
+    });
   }
 
   return (
@@ -95,10 +107,10 @@ export default function AnswerForm() {
               form="form-rhf-demo"
               className="primary-gradient w-fit"
             >
-              {isSubmitting ? (
+              {isAnswering ? (
                 <>
                   <Spinner className="mr-2 h-4 w-4" />
-                  <span>Submitting...</span>
+                  <span>Answering...</span>
                 </>
               ) : (
                 <>Submit Answer</>
