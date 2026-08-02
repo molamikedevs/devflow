@@ -24,6 +24,14 @@ export interface QuestionParams {
   tags: TagParams[];
 }
 
+export interface AnswerParams {
+  _id: string;
+  content: string;
+  author: Author;
+  createdAt: Date;
+  upvotes: number;
+}
+
 // Standardized response type for API actions
 type ActionResponse<T = null> = {
   success: boolean;
@@ -65,5 +73,8 @@ export interface GetTagQuestionsParams extends PaginatedSearchParams {
 }
 
 export interface IncrementViewsParams {
+  questionId: string;
+}
+export interface GetAnswersParams extends PaginatedSearchParams {
   questionId: string;
 }

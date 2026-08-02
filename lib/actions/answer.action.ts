@@ -6,12 +6,17 @@ import Question from '@/database/question.model';
 import { revalidatePath } from 'next/cache';
 
 import { CreateAnswerParams } from '@/types/action';
-import { ActionResponse, ErrorResponse } from '@/types/global';
+import {
+  ActionResponse,
+  AnswerParams,
+  ErrorResponse,
+  GetAnswersParams,
+} from '@/types/global';
 import mongoose from 'mongoose';
 import action from '../handlers/action';
 import handleError from '../handlers/error';
 import { NotFoundError, RequestError } from '../http-errors';
-import { AnswerServerSchema } from '../validation';
+import { AnswerServerSchema, GetAnswersSchema } from '../validation';
 
 export async function createAnswer(
   params: CreateAnswerParams,
@@ -32,7 +37,7 @@ export async function createAnswer(
   session.startTransaction();
 
   try {
-    const question = await Question.findById(questionId);
+    const question = await Question.findById(questionId).session(session);
     if (!question) throw new NotFoundError('Question');
 
     const [newAnswer] = await Answer.create(
@@ -48,8 +53,9 @@ export async function createAnswer(
 
     if (!newAnswer) throw new RequestError(500, 'Failed to create answer');
 
-    question.answer += 1;
+    question.answers += 1;
     await question.save({ session });
+    session.commitTransaction();
     revalidatePath(siteConfig.ROUTES.QUESTION(questionId));
 
     return { success: true, data: JSON.parse(JSON.stringify(newAnswer)) };
@@ -58,5 +64,65 @@ export async function createAnswer(
     return handleError(error) as ErrorResponse;
   } finally {
     await session.endSession();
+  }
+}
+
+export async function getAnswers(params: GetAnswersParams): Promise<
+  ActionResponse<{
+    answers: AnswerParams[];
+    isNext: boolean;
+    totalAnswers: number;
+  }>
+> {
+  const validationResult = await action({ params, schema: GetAnswersSchema });
+  if (validationResult instanceof Error)
+    return handleError(validationResult) as ErrorResponse;
+
+  const {
+    page = 1,
+    pageSize = 10,
+    filter,
+    questionId,
+  } = validationResult.params!;
+  const skip = (page - 1) * pageSize;
+  const limit = pageSize;
+
+  let sortCriteria = {};
+
+  switch (filter) {
+    case 'latest':
+      sortCriteria = { createdAt: -1 };
+      break;
+    case 'oldest':
+      sortCriteria = { createdAt: 1 };
+      break;
+    case 'popular':
+      sortCriteria = { upvotes: -1 };
+      break;
+    default:
+      sortCriteria = { createdAt: -1 };
+      break;
+  }
+
+  try {
+    const totalAnswers = await Answer.countDocuments({ question: questionId });
+    const answers = await Answer.find({ question: questionId })
+      .populate('author', '_id name image')
+      .sort(sortCriteria)
+      .limit(limit)
+      .sort();
+
+    const isNext = totalAnswers > skip + answers.length;
+
+    return {
+      success: true,
+      data: {
+        answers: JSON.parse(JSON.stringify(answers)),
+        isNext,
+        totalAnswers,
+      },
+    };
+  } catch (error) {
+    return handleError(error) as ErrorResponse;
   }
 }

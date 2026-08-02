@@ -1,9 +1,11 @@
+import AllAnswers from '@/components/answers/all-answers';
 import TagCard from '@/components/cards/Tag-card';
 import Metric from '@/components/common/metric';
 import UserAvatar from '@/components/common/user-avatar';
 import PreviewContent from '@/components/editor/preview-content';
 import AnswerForm from '@/components/forms/answer-form';
 import { siteConfig } from '@/config/site';
+import { getAnswers } from '@/lib/actions/answer.action';
 import { getQuestion, IncrementViews } from '@/lib/actions/question.action';
 import { formatNumber, getTimeStamp } from '@/lib/utils';
 import { RouteParams, TagParams } from '@/types/global';
@@ -15,8 +17,12 @@ export const metadata = {
   title: 'Question Details',
 };
 
-export default async function QuestionDetails({ params }: RouteParams) {
+export default async function QuestionDetails({
+  params,
+  searchParams,
+}: RouteParams) {
   const { id } = await params;
+  const { page, pageSize, filter } = await searchParams;
   const { success, data: question } = await getQuestion({ questionId: id });
 
   after(async () => {
@@ -24,6 +30,17 @@ export default async function QuestionDetails({ params }: RouteParams) {
   });
 
   if (!success || !question) return redirect('/404');
+
+  const {
+    data: answersResult,
+    error: errorAnswers,
+    success: areAnswersLoaded,
+  } = await getAnswers({
+    questionId: id,
+    page: Number(page) || 1,
+    pageSize: Number(pageSize) || 10,
+    filter,
+  });
 
   const { author, createdAt, content, title, views, answers, tags } = question;
 
@@ -91,7 +108,20 @@ export default async function QuestionDetails({ params }: RouteParams) {
         ))}
       </div>
       <section className="my-5">
-        <AnswerForm questionId={question._id} />
+        <AllAnswers
+          data={answersResult?.answers}
+          error={errorAnswers}
+          success={areAnswersLoaded}
+          totalAnswers={answersResult?.totalAnswers || 0}
+        />
+      </section>
+
+      <section className="my-5">
+        <AnswerForm
+          questionId={question._id}
+          questionTitle={question.title}
+          questionContent={question.content}
+        />
       </section>
     </>
   );
