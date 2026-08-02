@@ -1,7 +1,9 @@
 'use client';
 
+import { api } from '@/lib/api';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useRef, useState, useTransition } from 'react';
+import { useSession } from 'next-auth/react';
+import { useRef, useState, useTransition, type ChangeEvent } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import * as z from 'zod';
@@ -20,9 +22,20 @@ const Editor = dynamic(() => import('@/components/editor/index'), {
   ssr: false,
 });
 
-export default function AnswerForm({ questionId }: { questionId: string }) {
+interface Props {
+  questionId: string;
+  questionTitle: string;
+  questionContent: string;
+}
+
+export default function AnswerForm({
+  questionId,
+  questionTitle,
+  questionContent,
+}: Props) {
   const [isAnswering, startTransition] = useTransition();
   const [isAISubmitting, setIsAISubmitting] = useState(false);
+  const session = useSession();
   const editorRef = useRef<MDXEditorMethods>(null);
   const form = useForm<z.infer<typeof AnswerSchema>>({
     resolver: zodResolver(AnswerSchema),
@@ -31,19 +44,72 @@ export default function AnswerForm({ questionId }: { questionId: string }) {
     },
   });
 
-  function onSubmit(data: z.infer<typeof AnswerSchema>) {
+  const onSubmit = async (data: z.infer<typeof AnswerSchema>) => {
     startTransition(async () => {
       const result = await createAnswer({ questionId, content: data.content });
       if (result.success) {
         form.reset();
         toast.success('Your answer has been posted successfully');
+
+        if (editorRef.current) {
+          editorRef.current.setMarkdown('');
+        }
       } else {
         toast.error('Failed to post answer', {
           description: result.error?.message,
         });
       }
     });
-  }
+  };
+
+  const handleFormSubmit = (event: ChangeEvent<HTMLFormElement>) => {
+    void form.handleSubmit(onSubmit)(event);
+  };
+
+  const handleAIGenerate = async () => {
+    if (session.status !== 'authenticated') {
+      toast.error('You must be logged in to use AI generation.');
+      return;
+    }
+
+    setIsAISubmitting(true);
+    const userAnswer = editorRef.current?.getMarkdown() || '';
+
+    try {
+      const { success, data, error } = await api.ai.getAnswer(
+        questionTitle,
+        questionContent,
+        userAnswer,
+      );
+      if (!success) {
+        toast.error('Failed to generate AI answer.', {
+          description:
+            error?.message || 'An error occurred during AI generation.',
+        });
+        return;
+      }
+
+      const formattedData = data?.replace(/<br>/g, ' ').toString().trim();
+      if (editorRef.current && formattedData) {
+        editorRef.current.setMarkdown(formattedData);
+        form.setValue('content', formattedData || '');
+        form.trigger('content');
+      }
+
+      toast.success('AI answer generated successfully!', {
+        description: 'The answer has been generated and filled in the editor.',
+      });
+    } catch (error) {
+      toast.error('Failed to generate AI answer.', {
+        description:
+          error instanceof Error
+            ? error.message
+            : 'An error occurred during AI generation.',
+      });
+    } finally {
+      setIsAISubmitting(false);
+    }
+  };
 
   return (
     <div>
@@ -54,6 +120,7 @@ export default function AnswerForm({ questionId }: { questionId: string }) {
         <Button
           className="btn light-border-2 text-primary-500 dark:text-primary-500 gap-1.5 rounded-md border px-4 py-2.5 shadow-none"
           disabled={isAISubmitting}
+          onClick={handleAIGenerate}
         >
           {isAISubmitting ? (
             <>
@@ -76,7 +143,7 @@ export default function AnswerForm({ questionId }: { questionId: string }) {
       </div>
       <Card className="bg-background-light700_dark300">
         <CardContent className="flex w-full flex-col gap-10">
-          <form id="form-rhf-demo" onSubmit={form.handleSubmit(onSubmit)}>
+          <form id="form-rhf-demo" onSubmit={handleFormSubmit}>
             <FieldGroup>
               <Controller
                 name="content"

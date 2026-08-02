@@ -2,6 +2,7 @@ import { siteConfig } from '@/config/site';
 import { IAccount } from '@/database/account.model';
 import { IUser } from '@/database/user.model';
 import { OauthSigninParams } from '@/types/action';
+import { ActionResponse } from '@/types/global';
 import { fetchHandler } from './handlers/fetch';
 
 // Falls back to localhost for local development if the env var isn't set
@@ -9,6 +10,7 @@ const API_BASE_URL =
   process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:3000/api';
 
 export const api = {
+  // Authenticated-related API calls
   auth: {
     oAuthSignIn: ({ provider, providerAccountId, user }: OauthSigninParams) =>
       fetchHandler(
@@ -19,6 +21,7 @@ export const api = {
         },
       ),
   },
+  // User-related API calls
   users: {
     getAll: () => fetchHandler(`${API_BASE_URL}/users`),
     getById: (id: string) => fetchHandler(`${API_BASE_URL}/users/${id}`),
@@ -41,6 +44,7 @@ export const api = {
       fetchHandler(`${API_BASE_URL}/users/${id}`, { method: 'DELETE' }),
   },
 
+  // Account-related API calls
   accounts: {
     getAll: () => fetchHandler(`${API_BASE_URL}/accounts`),
     getById: (id: string) => fetchHandler(`${API_BASE_URL}/accounts/${id}`),
@@ -61,5 +65,19 @@ export const api = {
       }),
     delete: (id: string) =>
       fetchHandler(`${API_BASE_URL}/accounts/${id}`, { method: 'DELETE' }),
+  },
+
+  // AI-related API calls
+  ai: {
+    getAnswer: (
+      question: string,
+      content: string,
+      userAnswer?: string,
+    ): Promise<ActionResponse<string>> =>
+      fetchHandler(`${API_BASE_URL}/ai/answers`, {
+        method: 'POST',
+        body: JSON.stringify({ question, content, userAnswer }),
+        timeout: 30000,
+      }),
   },
 };

@@ -11,7 +11,6 @@ export default function AnswerCard({
   _id,
   author: { _id: authorId, name, image },
   createdAt,
-  upvotes,
   content,
 }: AnswerParams) {
   const firstName = name?.split(' ')[0] || 'User';
