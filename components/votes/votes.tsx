@@ -1,27 +1,35 @@
 'use client';
 
+import { createVote } from '@/lib/actions/votes.action';
 import { formatNumber } from '@/lib/utils';
+import { HasVotedResponse } from '@/types/action';
+import { ActionResponse } from '@/types/global';
 import { useSession } from 'next-auth/react';
 import Image from 'next/image';
-import { useState } from 'react';
+import { use, useState } from 'react';
 import { toast } from 'sonner';
 
 interface Props {
   upvotes: number;
   downvotes: number;
-  hasupVoted: boolean;
-  hasdownVoted: boolean;
+  targetId: string;
+  targetType: 'question' | 'answer';
+  hasVotedPromise: Promise<ActionResponse<HasVotedResponse>>;
 }
 
 export default function Votes({
   upvotes,
   downvotes,
-  hasupVoted,
-  hasdownVoted,
+  targetId,
+  targetType,
+  hasVotedPromise,
 }: Props) {
   const [isLoading, setIsLoading] = useState(false);
   const session = useSession();
   const userId = session?.data?.user?.id;
+
+  const { success, data } = use(hasVotedPromise);
+  const { hasupVoted, hasdownVoted } = data || {};
 
   const handleVote = async (voteType: 'upvotes' | 'downvotes') => {
     if (!userId)
@@ -31,6 +39,17 @@ export default function Votes({
     setIsLoading(true);
 
     try {
+      const result = await createVote({
+        targetId,
+        targetType,
+        voteType,
+      });
+
+      if (!result.success) {
+        return toast.error('Failed to voted', {
+          description: result.error?.message,
+        });
+      }
       const successMessage =
         voteType === 'upvotes'
           ? `Upvote ${!hasupVoted ? 'added' : 'removed'} successfully`
@@ -53,7 +72,9 @@ export default function Votes({
     <div className="flex-center gap-2.5">
       <div className="flex-center gap-1.5">
         <Image
-          src={hasupVoted ? '/icons/upvote.svg' : '/icons/upvoted.svg'}
+          src={
+            success && hasupVoted ? '/icons/upvote.svg' : '/icons/upvoted.svg'
+          }
           width={18}
           height={18}
           alt="upvote"
@@ -71,7 +92,11 @@ export default function Votes({
 
       <div className="flex-center gap-1.5">
         <Image
-          src={hasdownVoted ? '/icons/downvote.svg' : '/icons/downvoted.svg'}
+          src={
+            success && hasdownVoted
+              ? '/icons/downvote.svg'
+              : '/icons/downvoted.svg'
+          }
           width={18}
           height={18}
           alt="downvote"

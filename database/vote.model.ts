@@ -28,7 +28,7 @@ const VoteSchema = new Schema<IVote>(
 );
 
 // one vote per user per item — prevents duplicate votes
-VoteSchema.index({ author: 1, actionId: 1, type: 1 }, { unique: true });
+VoteSchema.index({ author: 1, actionId: 1, actionType: 1 }, { unique: true });
 
 const Vote = models?.Vote || model<IVote>('Vote', VoteSchema);
 export default Vote;

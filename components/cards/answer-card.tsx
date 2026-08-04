@@ -3,17 +3,26 @@ import { siteConfig } from '@/config/site';
 import { cn, getTimeStamp } from '@/lib/utils';
 import { AnswerParams } from '@/types/global';
 import Link from 'next/link';
+import { Suspense } from 'react';
 
 import UserAvatar from '@/components/common/user-avatar';
+import Votes from '@/components/votes/votes';
+import { hasVoted } from '@/lib/actions/votes.action';
 import PreviewContent from '../editor/preview-content';
 
 export default function AnswerCard({
   _id,
   author: { _id: authorId, name, image },
   createdAt,
+  upvotes,
+  downvotes,
   content,
 }: AnswerParams) {
   const firstName = name?.split(' ')[0] || 'User';
+  const hasVotedPromise = hasVoted({
+    targetId: _id,
+    targetType: 'answer',
+  });
   return (
     <article className={cn('light-border relative border-b py-10')}>
       <span id={`answer-${_id}`} className="hash-span" />
@@ -42,7 +51,17 @@ export default function AnswerCard({
           </Link>
         </div>
 
-        <div className="flex justify-end">Votes</div>
+        <div className="flex justify-end">
+          <Suspense fallback={<div>Loading....</div>}>
+            <Votes
+              targetId={_id}
+              upvotes={upvotes}
+              downvotes={downvotes}
+              targetType="answer"
+              hasVotedPromise={hasVotedPromise}
+            />
+          </Suspense>
+        </div>
       </div>
       <PreviewContent content={content} />
     </article>
