@@ -4,6 +4,7 @@ import Metric from '@/components/common/metric';
 import UserAvatar from '@/components/common/user-avatar';
 import PreviewContent from '@/components/editor/preview-content';
 import AnswerForm from '@/components/forms/answer-form';
+import Votes from '@/components/votes/votes';
 import { siteConfig } from '@/config/site';
 import { getAnswers } from '@/lib/actions/answer.action';
 import { getQuestion, IncrementViews } from '@/lib/actions/question.action';
@@ -64,7 +65,12 @@ export default async function QuestionDetails({
           </div>
 
           <div className="flex items-center justify-end gap-4">
-            <p>Votes</p>
+            <Votes
+              upvotes={question.upvotes}
+              downvotes={question.downvotes}
+              hasupVoted={true}
+              hasdownVoted={false}
+            />
           </div>
         </div>
         <h2 className="h2-semibold text-dark200_light900 mt-3.5 w-full">
