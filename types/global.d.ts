@@ -30,6 +30,7 @@ export interface AnswerParams {
   author: Author;
   createdAt: Date;
   upvotes: number;
+  downvotes: number;
 }
 
 // Standardized response type for API actions

@@ -33,3 +33,19 @@ export interface CreateAnswerParams {
   questionId: string;
   content: string;
 }
+
+export interface CreateVoteParams {
+  targetId: string;
+  targetType: 'question' | 'answer';
+  voteType: 'upvotes' | 'downvotes';
+}
+export interface UpdateVoteCountParams extends CreateVoteParams {
+  change: 1 | -1;
+}
+
+export type HasVotedParams = pick<CreateVoteParams, 'targetId' | 'targetType'>;
+
+export interface HasVotedResponse {
+  hasupVoted: boolean;
+  hasdownVoted: boolean;
+}

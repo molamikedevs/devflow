@@ -4,14 +4,17 @@ import Metric from '@/components/common/metric';
 import UserAvatar from '@/components/common/user-avatar';
 import PreviewContent from '@/components/editor/preview-content';
 import AnswerForm from '@/components/forms/answer-form';
+import Votes from '@/components/votes/votes';
 import { siteConfig } from '@/config/site';
 import { getAnswers } from '@/lib/actions/answer.action';
 import { getQuestion, IncrementViews } from '@/lib/actions/question.action';
+import { hasVoted } from '@/lib/actions/votes.action';
 import { formatNumber, getTimeStamp } from '@/lib/utils';
 import { RouteParams, TagParams } from '@/types/global';
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
 import { after } from 'next/server';
+import { Suspense } from 'react';
 
 export const metadata = {
   title: 'Question Details',
@@ -42,6 +45,11 @@ export default async function QuestionDetails({
     filter,
   });
 
+  const hasVotedPromise = hasVoted({
+    targetId: question?._id,
+    targetType: 'question',
+  });
+
   const { author, createdAt, content, title, views, answers, tags } = question;
 
   return (
@@ -64,7 +72,15 @@ export default async function QuestionDetails({
           </div>
 
           <div className="flex items-center justify-end gap-4">
-            <p>Votes</p>
+            <Suspense fallback={<div>Loading....</div>}>
+              <Votes
+                upvotes={question.upvotes}
+                downvotes={question.downvotes}
+                targetId={question._id}
+                targetType="question"
+                hasVotedPromise={hasVotedPromise}
+              />
+            </Suspense>
           </div>
         </div>
         <h2 className="h2-semibold text-dark200_light900 mt-3.5 w-full">

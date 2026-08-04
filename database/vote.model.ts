@@ -3,8 +3,8 @@ import { Document, Schema, Types, model, models } from 'mongoose';
 export interface IVote {
   author: Types.ObjectId;
   actionId: Types.ObjectId;
-  type: 'question' | 'answer';
-  voteType: 'upvote' | 'downvote';
+  actionType: 'question' | 'answer';
+  voteType: 'upvotes' | 'downvotes';
 }
 
 export interface IVoteDoc extends IVote, Document {}
@@ -13,14 +13,14 @@ const VoteSchema = new Schema<IVote>(
   {
     actionId: { type: Schema.Types.ObjectId, required: true },
     author: { type: Schema.Types.ObjectId, ref: 'User', required: true },
-    type: {
+    actionType: {
       type: String,
       enum: ['question', 'answer'],
       required: true,
     },
     voteType: {
       type: String,
-      enum: ['upvote', 'downvote'],
+      enum: ['upvotes', 'downvotes'],
       required: true,
     },
   },
@@ -28,7 +28,7 @@ const VoteSchema = new Schema<IVote>(
 );
 
 // one vote per user per item — prevents duplicate votes
-VoteSchema.index({ author: 1, actionId: 1, type: 1 }, { unique: true });
+VoteSchema.index({ author: 1, actionId: 1, actionType: 1 }, { unique: true });
 
 const Vote = models?.Vote || model<IVote>('Vote', VoteSchema);
 export default Vote;
