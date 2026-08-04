@@ -195,3 +195,8 @@ export const UpdateVoteCountSchema = CreateVoteSchema.extend({
     .min(-1, 'Change must be -1 (decrement) or 1 (increment)')
     .max(1, 'Change must be -1 (decrement) or 1 (increment)'),
 });
+
+export const HasVotedSchema = CreateVoteSchema.pick({
+  targetId: true,
+  targetType: true,
+});
