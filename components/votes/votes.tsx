@@ -23,7 +23,7 @@ export default function Votes({
   const session = useSession();
   const userId = session?.data?.user?.id;
 
-  const handleVote = async (voteType: 'upvote' | 'downvote') => {
+  const handleVote = async (voteType: 'upvotes' | 'downvotes') => {
     if (!userId)
       return toast.error('You must be logged in to vote.', {
         description: 'Only a login user can vote',
@@ -32,7 +32,7 @@ export default function Votes({
 
     try {
       const successMessage =
-        voteType === 'upvote'
+        voteType === 'upvotes'
           ? `Upvote ${!hasupVoted ? 'added' : 'removed'} successfully`
           : `Downvote ${!hasdownVoted ? 'added' : 'removed'} successfully`;
 
@@ -59,7 +59,7 @@ export default function Votes({
           alt="upvote"
           className={`cursor-pointer ${isLoading && 'opacity-50'}`}
           aria-label="Upvote"
-          onClick={() => !isLoading && handleVote('upvote')}
+          onClick={() => !isLoading && handleVote('upvotes')}
         />
 
         <div className="flex-center background-light700_dark400 min-w-5 rounded-sm p-1">
@@ -77,7 +77,7 @@ export default function Votes({
           alt="downvote"
           className={`cursor-pointer ${isLoading && 'opacity-50'}`}
           aria-label="Downvote"
-          onClick={() => !isLoading && handleVote('downvote')}
+          onClick={() => !isLoading && handleVote('downvotes')}
         />
 
         <div className="flex-center background-light700_dark400 min-w-5 rounded-sm p-1">
