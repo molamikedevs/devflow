@@ -4,9 +4,11 @@ import Metric from '@/components/common/metric';
 import UserAvatar from '@/components/common/user-avatar';
 import PreviewContent from '@/components/editor/preview-content';
 import AnswerForm from '@/components/forms/answer-form';
+import SaveQuestion from '@/components/question/save-question';
 import Votes from '@/components/votes/votes';
 import { siteConfig } from '@/config/site';
 import { getAnswers } from '@/lib/actions/answer.action';
+import { hasSavedQuestion } from '@/lib/actions/collection.action';
 import { getQuestion, IncrementViews } from '@/lib/actions/question.action';
 import { hasVoted } from '@/lib/actions/votes.action';
 import { formatNumber, getTimeStamp } from '@/lib/utils';
@@ -50,6 +52,8 @@ export default async function QuestionDetails({
     targetType: 'question',
   });
 
+  const hasSavedPromise = hasSavedQuestion({ questionId: question?._id });
+
   const { author, createdAt, content, title, views, answers, tags } = question;
 
   return (
@@ -79,6 +83,13 @@ export default async function QuestionDetails({
                 targetId={question._id}
                 targetType="question"
                 hasVotedPromise={hasVotedPromise}
+              />
+            </Suspense>
+
+            <Suspense fallback={<div>Loading....</div>}>
+              <SaveQuestion
+                questionId={question._id}
+                hasSavedPromise={hasSavedPromise}
               />
             </Suspense>
           </div>
