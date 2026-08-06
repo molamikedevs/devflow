@@ -6,18 +6,15 @@ import { Button } from '@/components/ui/button';
 import { siteConfig } from '@/config/site';
 import { EMPTY_QUESTION } from '@/constants/states';
 import { getQuestions } from '@/lib/actions/question.action';
+import { RouteParams } from '@/types/global';
 
 import Link from 'next/link';
-
-interface QuestionSearchParams {
-  searchParams: Promise<{ [key: string]: string }>;
-}
 
 export const metadata = {
   title: 'Home',
 };
 
-export default async function Home({ searchParams }: QuestionSearchParams) {
+export default async function Home({ searchParams }: RouteParams) {
   const { page, pageSize, query, filter } = await searchParams;
 
   const { success, data, error } = await getQuestions({
