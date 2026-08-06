@@ -45,6 +45,12 @@ export interface UserParams {
   reputation?: number;
 }
 
+export interface CollectionParams {
+  _id: string;
+  author: Author;
+  question: QuestionParams;
+}
+
 // Standardized response type for API actions
 type ActionResponse<T = null> = {
   success: boolean;
