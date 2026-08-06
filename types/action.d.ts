@@ -49,3 +49,7 @@ export interface HasVotedResponse {
   hasupVoted: boolean;
   hasdownVoted: boolean;
 }
+
+export interface CollectionBaseParams {
+  questionId: string;
+}
