@@ -4,6 +4,7 @@ import { siteConfig } from '@/config/site';
 import Question, { IQuestionDoc } from '@/database/question.model';
 import Tag, { ITagDoc } from '@/database/tag.model';
 import TagQuestion from '@/database/tag.question.model';
+import dbConnect from '@/lib/mongoose';
 import { revalidatePath } from 'next/cache';
 
 import {
@@ -332,6 +333,20 @@ export async function IncrementViews(
     revalidatePath(siteConfig.ROUTES.QUESTION(questionId));
 
     return { success: true, data: { views: question.views } };
+  } catch (error) {
+    return handleError(error) as ErrorResponse;
+  }
+}
+
+export async function getHotQuestions(): Promise<
+  ActionResponse<QuestionParams[]>
+> {
+  try {
+    await dbConnect();
+    const questions = await Question.find()
+      .sort({ views: -1, upvotes: -1 })
+      .limit(5);
+    return { success: true, data: JSON.parse(JSON.stringify(questions)) };
   } catch (error) {
     return handleError(error) as ErrorResponse;
   }
