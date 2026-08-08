@@ -2,6 +2,7 @@
 
 import Question from '@/database/question.model';
 import Tag, { ITagDoc } from '@/database/tag.model';
+import dbConnect from '@/lib/mongoose';
 import {
   ActionResponse,
   ErrorResponse,
@@ -130,6 +131,16 @@ export async function getTagQuestions(params: GetTagQuestionsParams): Promise<
         isNext,
       },
     };
+  } catch (error) {
+    return handleError(error) as ErrorResponse;
+  }
+}
+
+export async function getTopTags(): Promise<ActionResponse<TagParams[]>> {
+  try {
+    await dbConnect();
+    const tags = await Tag.find().sort({ questions: -1 }).limit(5);
+    return { success: true, data: JSON.parse(JSON.stringify(tags)) };
   } catch (error) {
     return handleError(error) as ErrorResponse;
   }
