@@ -1,5 +1,6 @@
 import QuestionCard from '@/components/cards/question-card';
 import DataRenderer from '@/components/common/data-renderer';
+import Pagination from '@/components/common/pagination';
 import CommonFilter from '@/components/filters/common-filter';
 import HomeFilter from '@/components/filters/home-filter';
 import LocalSearch from '@/components/search/local-search';
@@ -26,7 +27,7 @@ export default async function Home({ searchParams }: RouteParams) {
     filter,
   });
 
-  const { questions } = data || {};
+  const { questions, isNext } = data || {};
 
   return (
     <>
@@ -70,6 +71,8 @@ export default async function Home({ searchParams }: RouteParams) {
           </div>
         )}
       />
+
+      <Pagination page={page} isNext={isNext || false} />
     </>
   );
 }

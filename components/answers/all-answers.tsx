@@ -3,10 +3,13 @@ import { EMPTY_ANSWERS } from '@/constants/states';
 import { ActionResponse, AnswerParams } from '@/types/global';
 import AnswerCard from '../cards/answer-card';
 import DataRenderer from '../common/data-renderer';
+import Pagination from '../common/pagination';
 import CommonFilter from '../filters/common-filter';
 
 interface Props extends ActionResponse<AnswerParams[]> {
   totalAnswers: number;
+  page: number;
+  isNext: boolean;
 }
 
 export default function AllAnswers({
@@ -14,6 +17,8 @@ export default function AllAnswers({
   error,
   success,
   totalAnswers,
+  page,
+  isNext,
 }: Props) {
   return (
     <div className="mt-11">
@@ -37,6 +42,7 @@ export default function AllAnswers({
           answers.map((answer) => <AnswerCard key={answer._id} {...answer} />)
         }
       />
+      <Pagination page={page} isNext={isNext || false} />
     </div>
   );
 }

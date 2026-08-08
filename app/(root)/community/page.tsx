@@ -1,5 +1,6 @@
 import UserCard from '@/components/cards/user-card';
 import DataRenderer from '@/components/common/data-renderer';
+import Pagination from '@/components/common/pagination';
 import CommonFilter from '@/components/filters/common-filter';
 import LocalSearch from '@/components/search/local-search';
 import { siteConfig } from '@/config/site';
@@ -22,7 +23,7 @@ export default async function Community({ searchParams }: RouteParams) {
     query,
   });
 
-  const { users } = data || {};
+  const { users, isNext } = data || {};
   return (
     <>
       <h1 className="h1-bold text-dark400_light900">All Users</h1>
@@ -53,6 +54,8 @@ export default async function Community({ searchParams }: RouteParams) {
           </div>
         )}
       />
+
+      <Pagination page={page} isNext={isNext || false} />
     </>
   );
 }

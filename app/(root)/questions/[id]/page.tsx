@@ -137,6 +137,8 @@ export default async function QuestionDetails({
       <section className="my-5">
         <AllAnswers
           data={answersResult?.answers}
+          isNext={answersResult?.isNext || false}
+          page={Number(page) || 1}
           error={errorAnswers}
           success={areAnswersLoaded}
           totalAnswers={answersResult?.totalAnswers || 0}
