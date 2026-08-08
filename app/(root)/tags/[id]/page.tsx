@@ -5,7 +5,9 @@ import { RouteParams } from '@/types/global';
 
 import QuestionCard from '@/components/cards/question-card';
 import DataRenderer from '@/components/common/data-renderer';
+import CommonFilter from '@/components/filters/common-filter';
 import LocalSearch from '@/components/search/local-search';
+import { TagFilters } from '@/constants/filters';
 
 export const metadata = {
   title: 'Tag Details',
@@ -40,6 +42,11 @@ export default async function TagDetails({
           imgSrc="/icons/search.svg"
           placeholder="Search..."
           otherClasses="flex-1"
+        />
+
+        <CommonFilter
+          filters={TagFilters}
+          otherClasses="min-h-[56px] sm:min-w-[170px]"
         />
       </section>
       <DataRenderer

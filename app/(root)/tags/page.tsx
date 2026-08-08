@@ -1,7 +1,9 @@
 import TagCard from '@/components/cards/Tag-card';
 import DataRenderer from '@/components/common/data-renderer';
+import CommonFilter from '@/components/filters/common-filter';
 import LocalSearch from '@/components/search/local-search';
 import { siteConfig } from '@/config/site';
+import { TagFilters } from '@/constants/filters';
 import { EMPTY_TAGS } from '@/constants/states';
 import { getTags } from '@/lib/actions/tag.action';
 import { RouteParams } from '@/types/global';
@@ -31,6 +33,11 @@ export default async function Tags({ searchParams }: RouteParams) {
           imgSrc="/icons/search.svg"
           placeholder="Search tags..."
           otherClasses="flex-1"
+        />
+
+        <CommonFilter
+          filters={TagFilters}
+          otherClasses="min-h-[56px] sm:min-w-[170px]"
         />
       </section>
 

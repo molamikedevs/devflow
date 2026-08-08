@@ -1,7 +1,7 @@
 'use client';
 
 import { Button } from '@/components/ui/button';
-import { filters } from '@/constants/filters';
+import { HomePageFilters } from '@/constants/filters';
 import { formUrlQuery, removeKeysFormUrlQuery } from '@/lib/url';
 import { cn } from '@/lib/utils';
 import { useRouter, useSearchParams } from 'next/navigation';
@@ -34,7 +34,7 @@ export default function HomeFilter() {
 
   return (
     <div className="mt-10 hidden flex-wrap gap-3 sm:flex">
-      {filters.map(({ name, value }) => (
+      {HomePageFilters.map(({ name, value }) => (
         <Button
           key={name}
           onClick={() => handleClick(value)}

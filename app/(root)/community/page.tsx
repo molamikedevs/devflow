@@ -1,7 +1,9 @@
 import UserCard from '@/components/cards/user-card';
 import DataRenderer from '@/components/common/data-renderer';
+import CommonFilter from '@/components/filters/common-filter';
 import LocalSearch from '@/components/search/local-search';
 import { siteConfig } from '@/config/site';
+import { UserFilters } from '@/constants/filters';
 import { EMPTY_USERS } from '@/constants/states';
 import { getUsers } from '@/lib/actions/users.action';
 import { RouteParams } from '@/types/global';
@@ -30,6 +32,11 @@ export default async function Community({ searchParams }: RouteParams) {
           imgSrc="/icons/search.svg"
           placeholder="There are some awesome developers here. Find them!"
           otherClasses="flex-1"
+        />
+
+        <CommonFilter
+          filters={UserFilters}
+          otherClasses="min-h-[56px] sm:min-w-[170px]"
         />
       </div>
 

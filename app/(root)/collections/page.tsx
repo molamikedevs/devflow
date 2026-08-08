@@ -1,7 +1,9 @@
 import QuestionCard from '@/components/cards/question-card';
 import DataRenderer from '@/components/common/data-renderer';
+import CommonFilter from '@/components/filters/common-filter';
 import LocalSearch from '@/components/search/local-search';
 import { siteConfig } from '@/config/site';
+import { CollectionFilters } from '@/constants/filters';
 import { EMPTY_COLLECTIONS } from '@/constants/states';
 import { getSavedQuestions } from '@/lib/actions/collection.action';
 import { RouteParams } from '@/types/global';
@@ -31,6 +33,11 @@ export default async function Collections({ searchParams }: RouteParams) {
           imgSrc="/icons/search.svg"
           placeholder="Search questions..."
           otherClasses="flex-1"
+        />
+
+        <CommonFilter
+          filters={CollectionFilters}
+          otherClasses="min-h-[56px] sm:min-w-[170px]"
         />
       </div>
 
